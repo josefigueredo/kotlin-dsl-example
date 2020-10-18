@@ -1,0 +1,47 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Sample application
+  license:
+    name: APL2
+basePath: /api
+schemes:
+- http
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /btcByDate:
+    post:
+      tags:
+      - Bitcoin
+      description: Get a price by date
+      parameters:
+        - name: findPrice
+          description: The user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FindPrice'
+      responses:
+        '200':
+          description: Returns the bitcoin
+  /fetchBtc:
+    post:
+      tags:
+        - Bitcoin
+      description:
+      responses:
+        '200':
+          description: Fetchs and save a bitcoin
+definitions:
+  FindPrice:
+    required:
+      - time
+    properties:
+      time:
+        type: string
+    example:
+      time: "2020-10-18T14:40:05.956"

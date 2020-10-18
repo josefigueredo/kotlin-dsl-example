@@ -1,0 +1,4 @@
+applications:
+- name: dsl-example
+  path: build/distributions/dsl-example.zip
+  buildpack: https://github.com/josefigueredo/kotlin-dsl-example.git
