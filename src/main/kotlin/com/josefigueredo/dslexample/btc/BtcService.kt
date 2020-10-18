@@ -10,18 +10,14 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
-
 
 class BtcService(
     val btcRepository: BtcMongoRepository
 ) {
 
-    var webClient = WebClient
+    val webClient = WebClient
         .builder()
         .baseUrl("https://blockchain.info")
         .exchangeStrategies(
@@ -36,22 +32,20 @@ class BtcService(
         )
         .build()
 
+    val formatDouble = { d: Double -> String.format("%.12f", d) }
 
-    fun findPrice(findPrice: FindPriceRequest): Mono<FindPriceResponse> {
-        return btcRepository
+    fun findPrice(findPrice: FindPriceRequest) =
+        btcRepository
             .findByCreatedDate(LocalDateTime.parse(findPrice.time, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             .flatMap { btc ->
                 Mono.just(
                     FindPriceResponse(
-                        String.format("%.12f",
-                                btc.price
-                        )
+                        formatDouble(btc.price)
                     )
                 )
             }
-    }
 
-    fun saveBtc2UsdPrice(): Mono<FetchBtcResponse> =
+    fun saveBtc2UsdPrice() =
         webClient
             .method(HttpMethod.GET)
             .uri("/tobtc?currency=USD&value=1")
@@ -67,9 +61,7 @@ class BtcService(
             .flatMap {
                 Mono.just(
                     FetchBtcResponse(
-                        String.format("%.12f",
-                            it.price
-                        ),
+                        formatDouble(it.price),
                         it.createdDate.toString()
                     )
                 )

@@ -16,6 +16,16 @@ class Application(port: Int = dotenv["PORT"]?.toInt() ?: 8080) {
     private val server: HttpServer
     private var disposableServer: DisposableServer? = null
 
+    init {
+        val context = GenericApplicationContext().apply {
+            beans().initialize(this)
+            refresh()
+        }
+        httpHandler = WebHttpHandlerBuilder.applicationContext(context).build()
+        val adapter = ReactorHttpHandlerAdapter(httpHandler)
+        server = HttpServer.create().host("localhost").handle(adapter).port(port) // port)
+    }
+
     fun start() {
         disposableServer = server.bindNow(Duration.ofSeconds(5))
     }
@@ -28,16 +38,6 @@ class Application(port: Int = dotenv["PORT"]?.toInt() ?: 8080) {
 
     fun stop() {
         disposableServer?.disposeNow()
-    }
-
-    init {
-        val context = GenericApplicationContext().apply {
-            beans().initialize(this)
-            refresh()
-        }
-        httpHandler = WebHttpHandlerBuilder.applicationContext(context).build()
-        val adapter = ReactorHttpHandlerAdapter(httpHandler)
-        server = HttpServer.create().host("localhost").handle(adapter).port(port) // port)
     }
 }
 

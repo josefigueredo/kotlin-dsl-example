@@ -16,6 +16,6 @@ class BtcMongoRepository(private val reactiveMongoTemplate: ReactiveMongoTemplat
             )
         )
 
-    fun save(bitcoinPriceDocument: BitcoinPriceDocument): Mono<BitcoinPriceDocument> =
+    fun save(bitcoinPriceDocument: BitcoinPriceDocument) =
         reactiveMongoTemplate.save(bitcoinPriceDocument)
 }
